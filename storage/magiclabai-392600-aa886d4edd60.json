@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "magiclabai-392600",
+  "private_key_id": "aa886d4edd60869256794a722c9afa4c2d324afb",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCuTRarEkQG8fw2\nP+qxfiQGzX4CzL4/ahd/D/wIEIT4zVOAodc4zJA1w8Nxp8SSVycFUYMFaHi2Pkyp\nkcnYCst0Nh3gDxUwvRCliP65xepayGxUpNt8sxQiU5jaOjMpA1+bPaETzbcHxwj1\nlhF2SaQ91C7KqFE8J4uy0yPhISDv2MoWamvI9F3P0+taVXUKxmsBSFx6Yelp6UV0\nWdrkGdIt/ZbmjLBbVD1+SnJ2F3Av19eMA2dHqMin4Lijxap8oZHwrt5SRg7gtYHH\nIE1Kmc4ANnnG4O3hqEWksnIjzDZlYjiu6EnyhORdZ2myptah9J5z0WN4zghiRwsP\nEbhNrckxAgMBAAECggEAAnYPE1yxWlarcBhqU+XnJDOy/fRWSCAophFuUTlAUxX3\n91uJqy5rx5+SAcexEVGC2PrQpohrbRmEz3o8wHTEEKS05VQvMVpNFa+hLFOSqo7K\nOqPT39SUl2No7PrDByG/oAolwpk44TasCNGM9vJaoT8e50XgdPC4bV6uUt8AR3Sz\nzQ7bmf+otbgpyOrMbGcZNl2PL7tomGCNXqb/daolkBL+mqIb2A06YhpOTC+TkAh+\nMdI091Iip5fj4M/mkpWGkUsHH9TAAPrXBzia1K9v68yS+62aPqoXIgKy4+q1Ufxl\n3Sk6uJE40vhTs2TftzuHjndocZX/wMt0is8PpZrGYQKBgQDsfTjZ3lfsaWlWL12q\ntnBrNNgq0mjgiIPAiTuB2/svAMjHPC7ozFkvLToU/tHfdG36gmgeZcyngDkHTANN\n6ZJ5X55WHav2AfwbwRiEYEMDsmKWQNwVY2nxqA2P7s0IIhBRoK7xcCx+MhgcUDHX\nIK1Lf7P4roojXAK9guZClzd64QKBgQC8rmwKZcgK0uwp3hddjgyfpd1AAznDlBNg\nMhtt7MFCyx9DyJ9WbTppoBQNZ4nHutDpXtyLNFPi2RbA7yisvwRtLoO8BCfkJDKp\ncWpusP09TwWiaLwmxXdAKXumzqpKd3meYCWEnr1VPzQHemCK5UGA+vupzsVKZ/Xi\n7yMqykToUQKBgD+fBI9gSKkaRrNf9MP7Zs0An3MNvhdBwqgmgzLRWobvoBQxdbE9\nYHTXpvuE/jMuYHP3Z0leO6uITE9RPMZWIwiyF6e1PdDmAcv5q73ZI843zFv9wPek\nEhloC5YAOXqJp3g+UTI06lNc6K2dSXtFmDlqdqFdW15d34LaV1Xs1okhAoGAflzG\nKLR/o5gc5/FAbrx6gdUAdyVx4yThURRdwGHGEKieeLP82lHuw9yccVm9MZFQ5mpM\ng8H4yD0hevbwo7iOC10ShrG10ZnYgBhf8mAASbYJjPpdwA2RTtw5Xr6b16FqRwIX\nPlldbaEVhEiWLY9aLjponxHGmY1EZMZJJBgwy/ECgYAtNulUVucvWaiZqVoafHiP\nkCxxrhgdv7x+9WuEf/vLQk6qNtKgOH6JHIgy+0X9jSnOUuByrU/ilwXV3Ns72Zmw\nY1b+w/iHxk325hLF8U7BdpqTrYEfdF9m3okHpP3Jzs2tBvrlr1Ie1NPGPenBSvkW\nEqQWVOWjun75mVLEoY08nw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "magiclab-tts@magiclabai-392600.iam.gserviceaccount.com",
+  "client_id": "109998701745304948984",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/magiclab-tts%40magiclabai-392600.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
