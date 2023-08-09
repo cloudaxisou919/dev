@@ -38,4 +38,18 @@
     @if($setting->dashboard_code_before_head != null)
         {!!$setting->dashboard_code_before_head!!}
     @endif
+    <style>
+        .custom-container {
+            max-width: 600px;
+            margin-left: 0;
+            margin-right: 0;
+        }
+        .bg-style{
+            padding: 15px;
+            border-radius: 15px;
+            background: #dddddd;
+            margin-bottom:5px;
+            margin-right: 10px;
+        } 
+    </style>
 </head>

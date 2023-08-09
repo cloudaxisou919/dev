@@ -1,15 +1,5 @@
 <!-- Start image generator -->
 @if($openai->type == 'image')
-<div class="btn-group mb-3" role="group"><a href="{{route('dashboard.user.openai.generator', 'ai_image_generator')}}">
-    <button class="btn btn-light btn-default"  autofocus="autofocus" style="background-color: #330582;color:white">
-       OpenAI
-    </button>
-</a></div>
-<div class="btn-group mb-3" role="group"><a href="{{route('dashboard.user.thenextleg.generator', 'ai_image_generator')}}">
-    <button class="btn btn-light btn-default" autofocus="autofocus" >
-       TheNextLeg
-    </button>
-</a></div>
     <div class="row row-deck row-cards">
         <div class="col-12 flex-column">
             <div class="card bg-[#F3E2FD] !shadow-sm dark:bg-[#14171C] dark:shadow-black">
@@ -23,6 +13,10 @@
                           <label class="form-selectgroup-item-image-gen" image-generator="stablediffusion">
                             <input type="radio" name="icons" value="stablediffusion" class="form-selectgroup-input" />
                             <h3 class="form-selectgroup-label border-none dark:!text-white">Stable Diffusion</h3>
+                          </label>
+                          <label class="form-selectgroup-item-image-gen" image-generator="magiclensai">
+                            <input type="radio" name="icons" value="magiclensai" class="form-selectgroup-input" onclick="window.location.href = '{{route('dashboard.user.magiclensai.generator', 'ai_image_generator')}}'"/>
+                            <h3 class="form-selectgroup-label border-none dark:!text-white">MagicLensAI</h3>
                           </label>
                         </div>
                     </div>

@@ -51,7 +51,7 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/",
-			"TheNextLeg\\": "thenextleg/"
+			"MagicLensAI\\": "magiclensai/"
         }
     },
     "scripts": {

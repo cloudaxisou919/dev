@@ -77,13 +77,14 @@
         "files": [
             "tests/_files/CoverageNamespacedFunctionTest.php",
             "tests/_files/CoveredFunction.php",
+            "tests/_files/Generator.php",
             "tests/_files/NamespaceCoveredFunction.php",
             "tests/end-to-end/code-coverage/ignore-function-using-attribute/src/CoveredFunction.php"
         ]
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "10.2-dev"
+            "dev-main": "10.3-dev"
         }
     }
 }

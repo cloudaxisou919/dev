@@ -15,7 +15,7 @@ return [
 
     'paths' => [
         resource_path('views'),
-		realpath(base_path('thenextleg/views')),
+		realpath(base_path('magiclensai\views')),
     ],
 
     /*
