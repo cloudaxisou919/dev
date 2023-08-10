@@ -1,7 +1,6 @@
 <div class="col-6 custom-container">
     <div class="row custom-row bg-style" >
-     
-        @foreach($thenextlegImagesArray as $entry)
+        @foreach($thenextlegImagesArrays as $entry)
                 <div class="col-6 mb-2 mt-2 ">
                     <div class="image-result group">
                         <div class="relative aspect-square rounded-lg mb-2 overflow-hidden group-hover:shadow-lg transition-all">
@@ -9,7 +8,7 @@
                                 <div class="flex items-center justify-center gap-2 w-full h-full absolute top-0 left-0 opacity-0 transition-opacity group-hover:!opacity-100">
                                     <div class="flex flex-col">
                                         <div>
-                                            <a href="{{$entry['images']->image_path}}" class="btn items-center justify-center w-9 h-9 p-0 download" download="download_<?php echo $entry->id ?>">
+                                            <a href="{{$entry['images']->image_path}}" class="btn items-center justify-center w-9 h-9 p-0 download" download="download_<?php echo $entry['images']->id ?>">
                                                 <svg width="8" height="11" viewBox="0 0 8 11" fill="var(--lqd-heading-color)" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M4.57422 0.5V8.75781L6.67969 6.67969L7.5 7.5L4 11L0.5 7.5L1.32031 6.67969L3.42578 8.75781V0.5H4.57422Z"/>
                                                 </svg>
@@ -28,7 +27,7 @@
                                             </a>
                                         </div>
                                         <div class="btn-group mt-3 mb-3 justify-center" role="group"><a href="{{route('dashboard.user.magiclensai.generator', 'ai_image_generator')}}">
-                                                <button class="btn btn-light btn-default variation" data-id= "{{$entry['button_message_id']}}" data-index = "{{$entry['image_index']}}" autofocus="autofocus" id= "openai_generator_button" style="background-color: #330582;color:white" >
+                                                <button class="btn btn-light btn-default variation" data-id= "{{$entry['button_message_id']}}" data-index = "{{$entry['image_index']}}" data-variation="{{$entry['images']->id}}" autofocus="autofocus" id= "openai_generator_button" style="background-color: #330582;color:white" >
                                                    Variation
                                                 </button>
                                             </a>
@@ -39,7 +38,16 @@
                         </div>
                     </div>
         @endforeach
-     
+        <?php
+       
+        foreach ($thenextlegImagesArrays as $key=>$entry) { 
+            if($key == 0){
+            ?>
+              
+        <p class="mt-3 text-muted text-center mb-4 mx-auto">
+                {{ $entry['images']['created_at']->diffForHumans() }}
+            </p>
+       <?php  }}  ?>
     </div>
  </div>
  

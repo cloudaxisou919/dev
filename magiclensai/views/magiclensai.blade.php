@@ -24,7 +24,8 @@
 @section('script')
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
     <script>
-
+        var id;
+        var messageId;
         function disableNewProgress(){
             $(".variation").prop("disabled", true);
             $(".generate-button").prop("disabled", true);
@@ -36,6 +37,7 @@
             $(".variation").html("Variation");
             $(".generate-button").html("Regenerate");
         }
+
 
         jQuery(document).ready(function(){
 			
@@ -69,6 +71,7 @@
 
                 dataIdValue = $(this).data("id");
                 dataIndexValue = $(this).data("index");
+                id = $(this).data("variation");
                 $.ajax({
                     type: "post",
                     url: "/dashboard/user/magiclensai/button",
@@ -81,7 +84,7 @@
                         toastr.info('Please wait for the response. It may take 4-5 minutes.');
                         setTimeout(function() {
                         if (data.messageId) {
-                            var result = checkProgress(data.messageId);
+                            var result = checkProgress(data.messageId,id);
                         } else {
                             enableNewProgress();
                             toastr.error("messageId is missing or null.");
@@ -100,15 +103,17 @@
                 });
             });
         });
-        function checkProgress(messageId){
+        function checkProgress(messageId, id = null){
             disableNewProgress();
             document.getElementById("openai_generator_button").disabled = true;
             document.getElementById("openai_generator_button").innerHTML = "Please Wait";
 			document.querySelector('#app-loading-indicator')?.classList?.remove('opacity-0');
+            var url = "/dashboard/user/magiclensai/generate/" + messageId;
             $.ajax({
                 type: "get",
-                url:  "/dashboard/user/magiclensai/generate/"+messageId,
+                url:  url,
                 dataType:"json",
+                data:{id:id},
                 success: function (data){
                     if(data.progress == 100 ){
                         toastr.success('Generated Successfully!');
@@ -129,7 +134,7 @@
                     }
                     else{
                         setTimeout(function(){
-                            checkProgress(messageId);
+                            checkProgress(messageId,id);
                         }, 10000 );
                     }
                 },
@@ -149,49 +154,7 @@
             });
             return false;
         }
-        // function upscaleImage(messageId){
-        //     disableNewProgress();
-		// 	document.querySelector('#app-loading-indicator')?.classList?.remove('opacity-0');
-        //     $.ajax({
-        //         type: "post",
-        //         url:  "/dashboard/user/thenextleg/upscale/"+messageId,
-        //         dataType:"json",
-        //         success: function (data){
-        //             if (data.progress == 100 && data.data.original.response.length > 0  ) {
-        //                 toastr.success("Upscaled Successfully!");
-        //                 document.querySelector('#app-loading-indicator')?.classList?.add('opacity-0');
-        //                 document.querySelector('#workbook_regenerate')?.classList?.remove('hidden');
-
-        //                 $("#append-images").prepend(data.data);
-        //                 enableNewProgress();
-        //             } else if (data.progress === 'incomplete') {
-        //                 enableNewProgress();
-        //                 document.querySelector('#app-loading-indicator')?.classList?.add('opacity-0');
-        //                 document.querySelector('#workbook_regenerate')?.classList?.remove('hidden');
-        //                 setTimeout(function() {
-        //                     upscaleImage(messageId);
-        //                 }, 10000);
-        //             }else {
-        //                 enableNewProgress();
-        //                 toastr.info("Image is already upscaled!");
-        //                 document.querySelector('#app-loading-indicator')?.classList?.add('opacity-0');
-        //                 document.querySelector('#workbook_regenerate')?.classList?.remove('hidden');
-        //             }
-        //         },
-        //         error: function (data) {
-        //             if ( data.responseJSON.errors ) {
-		// 				$.each(data.responseJSON.errors, function(index, value) {
-		// 					toastr.error(value);
-		// 				});
-		// 			} else if ( data.responseJSON.message ) {
-		// 				toastr.error(data.responseJSON.message);
-		// 			}
-		// 			document.querySelector('#app-loading-indicator')?.classList?.add('opacity-0');
-		// 			document.querySelector('#workbook_regenerate')?.classList?.add('hidden');
-        //         }
-        //     });
-        //     return false;
-        // }
+        
         function sendOpenaiGeneratorForm(ev) {
 			"use strict";
 
@@ -221,7 +184,7 @@
                             "fadeOutDuration": 20000
                             };
                             toastr.info('Please wait for the response. It may take 4-5 minutes.');
-                            var result = checkProgress(data.messageId);
+                            var result = checkProgress(data.messageId,id);
                         }else {
                             toastr.error("messageId is missing or null.");
                         }

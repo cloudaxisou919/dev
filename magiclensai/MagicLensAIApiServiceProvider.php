@@ -12,7 +12,7 @@ class MagicLensAIApiServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Route::middleware('web')
-            ->group(base_path('magiclensai\routes.php'));
+            ->group(base_path('magiclensai/routes.php'));
     }
 
     public function register(): void

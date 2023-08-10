@@ -70,8 +70,9 @@ class MagicLensAIController extends Controller
         return $data;
     }
 
-    public function checkAIProgress(MagicLensAIService $theNextLegService, $messageId)
+    public function checkAIProgress(MagicLensAIService $theNextLegService,Request $request, $messageId )
     {
+        $id = $request['id'];
         $user = Auth::user();
         $data = $theNextLegService->message($messageId);
         $content = $data->getContent();
@@ -109,7 +110,12 @@ class MagicLensAIController extends Controller
                     $thenextlegImages->image_path = $imageUrl;
                     $thenextlegImages->image_index = $count++;
                     $thenextlegImages->save();
-
+                    
+                    if (isset($responseData['response']['type']) && $responseData['response']['type'] == 'button') {
+                        $thenextlegImages->variation_of = $id; 
+                        $thenextlegImages->save();
+                    }
+            
                     // $imageContents = base64_decode($imageUrl);
 
                     // $filename = uniqid('image_') . '.png';
@@ -117,13 +123,13 @@ class MagicLensAIController extends Controller
                     // Storage::disk('public')->put($filename,  $imageUrl);
                     // $thenextlegImages->image_local_path = 'uploads/' . $filename;
                     // $thenextlegImages->save();
-
+            
                     $thenextlegImagesArray[$key]['images'] = $thenextlegImages;
                     $thenextlegImagesArray[$key]['button_message_id'] = $responseData['response']['buttonMessageId'];
                     $thenextlegImagesArray[$key]['image_index'] = $thenextlegImages->image_index;
                 }
             }
-            $data = view('append_images', ['thenextlegImagesArray' => $thenextlegImagesArray])->render();
+            $data = view('append_images', ['thenextlegImagesArrays' => $thenextlegImagesArray])->render();
         } else {
             $data = array(
                 'errors' => ['Your Progress is Incomplete.'],
