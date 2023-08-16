@@ -9,11 +9,17 @@ class MagicLensAIService
 {
     private $baseUrl = 'https://api.thenextleg.io';
     private $version = 'v2';
+    private $loadBalancer = 'loadBalancer';
     private $bearerToken = '8c086293-daf3-43d8-ae80-9e3b28831fa6';
 
     private function buildUrl()
     {
         $url =  $this->baseUrl . '/' . $this->version;
+        return $url;
+    }
+    private function loadBalancerUrl()
+    {
+        $url =  $this->baseUrl . '/' . $this->loadBalancer;
         return $url;
     }
     private function buildHeader()
@@ -28,8 +34,7 @@ class MagicLensAIService
         try {
             $userInput = $request->input('msg');
             $client = new Client();
-
-            $response = $client->post($this->buildUrl($this->baseUrl, $this->version) . '/imagine', [
+            $response = $client->post($this->loadBalancerUrl($this->baseUrl, $this->loadBalancer) . '/imagine', [
                 'headers' => $this->buildHeader(),
                 'json' => [
                     'msg' => $userInput,
@@ -42,11 +47,12 @@ class MagicLensAIService
         }
     }
 
-    public function message($messageId)
+    public function message($messageId,$loadBalanceId)
     {
         $client = new Client();
-        $response = $client->get($this->buildUrl($this->baseUrl, $this->version) . "/message/{$messageId}", [
+        $response = $client->get($this->loadBalancerUrl($this->baseUrl, $this->loadBalancer) . "/message/{$messageId}", [
             'headers' => $this->buildHeader(),
+            'query' => ['loadBalanceId' => $loadBalanceId],
         ]);
         $data = json_decode($response->getBody(), true);
         return response()->json($data);
@@ -57,13 +63,15 @@ class MagicLensAIService
         try {
             $userInputButton = $request->input('button');
             $userInputButtonMessageId = $request->input('buttonMessageId');
+            $loadBalanceId = $request->input('loadBalanceId');
             $client = new Client();
 
-            $response = $client->post($this->buildUrl($this->baseUrl, $this->version) . '/button', [
+            $response = $client->post($this->loadBalancerUrl($this->baseUrl, $this->loadBalancer) . '/button', [
                 'headers' => $this->buildHeader(),
                 'json' => [
                     'button' => $userInputButton,
                     'buttonMessageId' => $userInputButtonMessageId,
+                    'loadBalanceId' => $loadBalanceId
                 ],
             ]);
             $data = json_decode($response->getBody(), true);

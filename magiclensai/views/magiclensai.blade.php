@@ -57,7 +57,7 @@
 			
 			jQuery(document).on("click",".download", function(e){
 					e.preventDefault();
-					var image = $(this).attr("href");
+					var image = $(this).data("download");
 					var download_name = $(this).attr("download");
 					download(image, download_name);
 			});			
@@ -83,8 +83,8 @@
                     success: function(data) {
                         toastr.info('Please wait for the response. It may take 4-5 minutes.');
                         setTimeout(function() {
-                        if (data.messageId) {
-                            var result = checkProgress(data.messageId,id);
+                        if (data.messageId && data.loadBalanceId) {
+                            var result = checkProgress(data.messageId,id,data.loadBalanceId);
                         } else {
                             enableNewProgress();
                             toastr.error("messageId is missing or null.");
@@ -103,7 +103,7 @@
                 });
             });
         });
-        function checkProgress(messageId, id = null){
+        function checkProgress(messageId, id = null,loadBalanceId){
             disableNewProgress();
             document.getElementById("openai_generator_button").disabled = true;
             document.getElementById("openai_generator_button").innerHTML = "Please Wait";
@@ -113,7 +113,7 @@
                 type: "get",
                 url:  url,
                 dataType:"json",
-                data:{id:id},
+                data:{id:id,loadBalanceId:loadBalanceId},
                 success: function (data){
                     if(data.progress == 100 ){
                         toastr.success('Generated Successfully!');
@@ -134,7 +134,7 @@
                     }
                     else{
                         setTimeout(function(){
-                            checkProgress(messageId,id);
+                            checkProgress(messageId,id,loadBalanceId);
                         }, 10000 );
                     }
                 },
@@ -178,13 +178,13 @@
                         if(data.status === 400){
                             toastr.error(data.errors);
                             enableNewProgress();
-                        }else if(data.messageId){
+                        }else if(data.messageId && data.loadBalanceId){
                             toastr.options = {
                             "timeOut": 20000,
                             "fadeOutDuration": 20000
                             };
                             toastr.info('Please wait for the response. It may take 4-5 minutes.');
-                            var result = checkProgress(data.messageId,id);
+                            var result = checkProgress(data.messageId,id,data.loadBalanceId);
                         }else {
                             toastr.error("messageId is missing or null.");
                         }

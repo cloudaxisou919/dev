@@ -9,26 +9,27 @@ use MagicLensAI\Models\TheNextLeg;
 use MagicLensAI\Models\TheNextLegImages;
 use MagicLensAI\Models\TheNextLegProgressLog;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\File;
 
 class MagicLensAIController extends Controller
 {
     public function index()
     {
         $user = Auth::user();
-        $nextLegs = TheNextLeg::where('user_id',$user->id)->orderBy('created_at', 'desc')->get();
+        $nextLegs = TheNextLeg::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
         $resultHTML = "";
-        foreach($nextLegs as $thenextleg){
-			
-			$thenextlegImages = TheNextlegImages::where(['thenextleg_id' => $thenextleg->id, 'variation_of' => null ] )->orderBy('created_at', 'desc')->get();
-			
-			foreach( $thenextlegImages as $variation){
+        foreach ($nextLegs as $thenextleg) {
+
+            $thenextlegImages = TheNextlegImages::where(['thenextleg_id' => $thenextleg->id, 'variation_of' => null])->orderBy('created_at', 'desc')->get();
+
+            foreach ($thenextlegImages as $variation) {
                 $thenextlegImages1 = TheNextlegImages::where('variation_of', $variation->id)->orderBy('created_at', 'desc')->get();
-                if(count($thenextlegImages1) > 0){
-                    $resultHTML .= view('partial_result_box_magiclensai', ["thenextlegImages"=>$thenextlegImages1] );
+                if (count($thenextlegImages1) > 0) {
+                    $resultHTML .= view('partial_result_box_magiclensai', ["thenextlegImages" => $thenextlegImages1]);
                 }
             }
-			
-            if(count($thenextlegImages) > 0){
+
+            if (count($thenextlegImages) > 0) {
                 $resultHTML .= view('partial_result_box_magiclensai', compact('thenextlegImages'));
             }
         }
@@ -37,7 +38,6 @@ class MagicLensAIController extends Controller
 
     public function generateAIRequest(Request $request, MagicLensAIService $theNextLegService)
     {
-
         $badWordsFilterResult = $this->badWordsFilter($request, $theNextLegService);
         $data = $badWordsFilterResult->getData();
         if ($data->isNaughty === true) {
@@ -49,7 +49,6 @@ class MagicLensAIController extends Controller
         $data = $theNextLegService->imagine($request);
         $content = $data->getContent();
         $responseData = json_decode($content, true);
-
         if (isset($responseData['success']) && $responseData['success'] === true) {
             $user = Auth::user();
 
@@ -70,11 +69,12 @@ class MagicLensAIController extends Controller
         return $data;
     }
 
-    public function checkAIProgress(MagicLensAIService $theNextLegService,Request $request, $messageId )
+    public function checkAIProgress(MagicLensAIService $theNextLegService, Request $request, $messageId)
     {
         $id = $request['id'];
+        $loadBalanceId = $request['loadBalanceId'];
         $user = Auth::user();
-        $data = $theNextLegService->message($messageId);
+        $data = $theNextLegService->message($messageId, $loadBalanceId);
         $content = $data->getContent();
         $responseData = json_decode($content, true);
         if (isset($responseData['progress']) && $responseData['progress'] <= 100) {
@@ -110,20 +110,48 @@ class MagicLensAIController extends Controller
                     $thenextlegImages->image_path = $imageUrl;
                     $thenextlegImages->image_index = $count++;
                     $thenextlegImages->save();
-                    
+
                     if (isset($responseData['response']['type']) && $responseData['response']['type'] == 'button') {
-                        $thenextlegImages->variation_of = $id; 
+                        $thenextlegImages->variation_of = $id;
                         $thenextlegImages->save();
                     }
-            
-                    // $imageContents = base64_decode($imageUrl);
+                    $postData = array(
+                        "imgUrl" => $imageUrl
+                    );
+                    $jsonData = json_encode($postData);
+                    $curl = curl_init();
 
-                    // $filename = uniqid('image_') . '.png';
+                    curl_setopt_array($curl, array(
+                        CURLOPT_URL => 'https://api.thenextleg.io/getImage',
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => '',
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 0,
+                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_SSL_VERIFYHOST => 0,
+                        CURLOPT_SSL_VERIFYPEER => 0,
+                        CURLOPT_CUSTOMREQUEST => 'POST',
+                        CURLOPT_POSTFIELDS =>  $jsonData,
+                        CURLOPT_HTTPHEADER => array(
+                            'Content-Type: application/json',
+                            'Authorization: Bearer 8c086293-daf3-43d8-ae80-9e3b28831fa6'
+                        ),
+                    ));
 
-                    // Storage::disk('public')->put($filename,  $imageUrl);
-                    // $thenextlegImages->image_local_path = 'uploads/' . $filename;
-                    // $thenextlegImages->save();
-            
+                    $response = curl_exec($curl);
+
+                    $filename = uniqid('image_') . '.png';
+                    curl_close($curl);
+                    file_put_contents('uploads/'.$filename, $response);
+                    $uploadedFile = new File('uploads/'.$filename);
+                    $aws_path = Storage::disk('s3')->put('', $uploadedFile);
+                    $path = Storage::disk('s3')->url($aws_path);
+
+                    $thenextlegImages->image_local_path = 'uploads/' . $filename;
+                    $thenextlegImages->aws_path = $path;
+                    $thenextlegImages->save();
+
                     $thenextlegImagesArray[$key]['images'] = $thenextlegImages;
                     $thenextlegImagesArray[$key]['button_message_id'] = $responseData['response']['buttonMessageId'];
                     $thenextlegImagesArray[$key]['image_index'] = $thenextlegImages->image_index;

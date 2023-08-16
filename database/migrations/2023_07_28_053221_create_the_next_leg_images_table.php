@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('upscale_local_path')->nullable();
             $table->dateTime('upscaling_at')->nullable();
             $table->integer('variation_of')->nullable();
+            $table->string('aws_path')->nullable();
             $table->timestamps();
         });
     }
