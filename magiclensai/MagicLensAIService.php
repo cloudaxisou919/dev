@@ -29,6 +29,13 @@ class MagicLensAIService
             'Accept' => 'application/json',
         ];
     }
+    private function header()
+    {
+        return [
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer ' . $this->bearerToken,
+        ];
+    }
     public function imagine(Request $request)
     {
         try {
@@ -47,7 +54,7 @@ class MagicLensAIService
         }
     }
 
-    public function message($messageId,$loadBalanceId)
+    public function message($messageId, $loadBalanceId)
     {
         $client = new Client();
         $response = $client->get($this->loadBalancerUrl($this->baseUrl, $this->loadBalancer) . "/message/{$messageId}", [
@@ -57,7 +64,7 @@ class MagicLensAIService
         $data = json_decode($response->getBody(), true);
         return response()->json($data);
     }
-    
+
     public function button(Request $request)
     {
         try {
@@ -98,5 +105,35 @@ class MagicLensAIService
         } catch (\GuzzleHttp\Exception\BadResponseException $e) {
             return $e->getResponse()->getBody()->getContents();
         }
+    }
+    public function getImage($imageUrl)
+    {
+        $postData = array(
+            "imgUrl" => $imageUrl
+        );
+        $jsonData = json_encode($postData);
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $this->baseUrl .'/getImage',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS =>  $jsonData,
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'Authorization: Bearer 8c086293-daf3-43d8-ae80-9e3b28831fa6'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+        return $response;
     }
 }

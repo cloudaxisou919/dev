@@ -8,11 +8,27 @@ use Illuminate\Http\Request;
 use MagicLensAI\Models\TheNextLeg;
 use MagicLensAI\Models\TheNextLegImages;
 use MagicLensAI\Models\TheNextLegProgressLog;
+use App\Models\Setting;
+use App\Models\SettingTwo;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\File;
 
 class MagicLensAIController extends Controller
 {
+    protected $settings;
+    const STORAGE_S3 = 's3';
+
+    public function __construct()
+    {
+        //Settings
+        $this->settings = Setting::first();
+        $this->settings_two = SettingTwo::first();
+        // Fetch the Site Settings object with openai_api_secret
+        $apiKeys = explode(',', $this->settings->openai_api_secret);
+        $apiKey = $apiKeys[array_rand($apiKeys)];
+        config(['openai.api_key' => $apiKey]);
+        //$this->client = FacadesOpenAI::client($this->settings->openai_api_secret);
+    }
     public function index()
     {
         $user = Auth::user();
@@ -115,38 +131,19 @@ class MagicLensAIController extends Controller
                         $thenextlegImages->variation_of = $id;
                         $thenextlegImages->save();
                     }
-                    $postData = array(
-                        "imgUrl" => $imageUrl
-                    );
-                    $jsonData = json_encode($postData);
-                    $curl = curl_init();
 
-                    curl_setopt_array($curl, array(
-                        CURLOPT_URL => 'https://api.thenextleg.io/getImage',
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_ENCODING => '',
-                        CURLOPT_MAXREDIRS => 10,
-                        CURLOPT_TIMEOUT => 0,
-                        CURLOPT_FOLLOWLOCATION => true,
-                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                        CURLOPT_SSL_VERIFYHOST => 0,
-                        CURLOPT_SSL_VERIFYPEER => 0,
-                        CURLOPT_CUSTOMREQUEST => 'POST',
-                        CURLOPT_POSTFIELDS =>  $jsonData,
-                        CURLOPT_HTTPHEADER => array(
-                            'Content-Type: application/json',
-                            'Authorization: Bearer 8c086293-daf3-43d8-ae80-9e3b28831fa6'
-                        ),
-                    ));
+                    $image = $theNextLegService->getImage($imageUrl);
 
-                    $response = curl_exec($curl);
-
-                    $filename = uniqid('image_') . '.png';
-                    curl_close($curl);
-                    file_put_contents('uploads/'.$filename, $response);
-                    $uploadedFile = new File('uploads/'.$filename);
-                    $aws_path = Storage::disk('s3')->put('', $uploadedFile);
-                    $path = Storage::disk('s3')->url($aws_path);
+                    $filename = uniqid('image_') . $key . '.png';
+                    Storage::disk('public')->put($filename, $image);
+                    
+                    $image_storage = $this->settings_two->ai_image_storage;
+                    if ($image_storage == self::STORAGE_S3) {
+                        $path = 'uploads/' .$filename;
+                        $uploadedFile = new File($path);
+                        $aws_path = Storage::disk('s3')->put('', $uploadedFile);
+                        $path = Storage::disk('s3')->url($aws_path);
+                    }
 
                     $thenextlegImages->image_local_path = 'uploads/' . $filename;
                     $thenextlegImages->aws_path = $path;

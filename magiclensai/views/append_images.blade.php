@@ -3,12 +3,13 @@
         @foreach($thenextlegImagesArrays as $entry)
         @php
         $image;
-        if(isset($entry['images']->aws_path) && $entry['images']->aws_path != null ){
-            $path = $entry['images']->aws_path;
-            $image = $path;
-        }elseif(isset($entry['images']->image_local_path) && $entry['images']->image_local_path != null ){
+        if(isset($entry['images']->image_local_path) && $entry['images']->image_local_path != null ){
             $path = $entry['images']->image_local_path;
             $image = URL::to('/').'/'.$path;
+        }
+        elseif(isset($entry['images']->aws_path) && $entry['images']->aws_path != null ){
+            $path = $entry['images']->aws_path;
+            $image = $path;
         }else{
             $image = $entry['images']->image_path;
         }

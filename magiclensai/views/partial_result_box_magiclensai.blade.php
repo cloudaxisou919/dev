@@ -4,12 +4,12 @@
         @foreach($thenextlegImages as $entry)
         @php
         $image;
-        if(isset($entry->aws_path) && $entry->aws_path != null ){
-            $path = $entry->aws_path;
-            $image = $path;
-        }elseif(isset($entry->image_local_path) && $entry->image_local_path != null ){
+        if(isset($entry->image_local_path) && $entry->image_local_path != null){
             $path = $entry->image_local_path;
             $image = URL::to('/').'/'.$path;
+        }elseif(isset($entry->aws_path) && $entry->aws_path != null ){
+            $path = $entry->aws_path;
+            $image = $path;
         }else{
             $image = $entry->image_path;
         }
