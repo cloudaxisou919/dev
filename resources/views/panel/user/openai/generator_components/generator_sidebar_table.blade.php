@@ -4,17 +4,18 @@
             <h2 class="mb-3">{{__('Result')}}</h2>
             <div class="image-results row">
                 @foreach($userOpenai as $entry)
+                @php $is_cdn_path = false; @endphp
                     <div class="col-6 col-md-4 col-xl-2 mb-8">
                         <div class="image-result group">
                             <div class="relative aspect-square rounded-lg mb-2 overflow-hidden group-hover:shadow-lg transition-all">
                                 <img src="{{$entry->output}}" class="w-full h-full aspect-square object-cover object-center" alt="{{$entry->input}}">
                                 <div class="flex items-center justify-center gap-2 w-full h-full absolute top-0 left-0 opacity-0 transition-opacity group-hover:!opacity-100">
-                                    <a href="{{$entry->output}}" class="btn items-center justify-center w-9 h-9 p-0" download>
+                                    <a href="<?php echo route('download.image')."/?url=".$entry->output ?>" target="_blank" class="btn items-center justify-center w-9 h-9 p-0 <?php if( $is_cdn_path == true){ ?>download<?php } ?>" >
                                         <svg width="8" height="11" viewBox="0 0 8 11" fill="var(--lqd-heading-color)" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M4.57422 0.5V8.75781L6.67969 6.67969L7.5 7.5L4 11L0.5 7.5L1.32031 6.67969L3.42578 8.75781V0.5H4.57422Z"/>
                                         </svg>
                                     </a>
-                                    <a data-fslightbox="gallery" href="{{$entry->output}}" class="btn lb items-center justify-center w-9 h-9 p-0">
+                                    <a data-fslightbox="gallery" href="{{$entry->output}}"  target="_blank" class="btn lb items-center justify-center w-9 h-9 p-0">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                             <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>

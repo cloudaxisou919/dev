@@ -22,8 +22,10 @@
     </div>
 @endsection
 @section('script')
+{{-- <script src="/assets/libs/fslightbox/index.js?1674944402" defer></script> --}}
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
-    <script>
+   
+   <script>
         var id;
         var messageId;
         function disableNewProgress(){
@@ -37,7 +39,6 @@
             $(".variation").html("Variation");
             $(".generate-button").html("Regenerate");
         }
-
 
         jQuery(document).ready(function(){
 			
@@ -56,10 +57,11 @@
 			}
 			
 			jQuery(document).on("click",".download", function(e){
-					e.preventDefault();
-					var image = $(this).data("download");
-					var download_name = $(this).attr("download");
-					download(image, download_name);
+				e.preventDefault();
+				// var image = $(this).data("download");
+				var image = $(this).attr("href");
+				var download_name = $(this).attr("download");
+				download(image, download_name);
 			});			
 		});
 

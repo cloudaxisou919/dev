@@ -29,13 +29,7 @@ class MagicLensAIService
             'Accept' => 'application/json',
         ];
     }
-    private function header()
-    {
-        return [
-            'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer ' . $this->bearerToken,
-        ];
-    }
+    
     public function imagine(Request $request)
     {
         try {
@@ -128,7 +122,7 @@ class MagicLensAIService
             CURLOPT_POSTFIELDS =>  $jsonData,
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
-                'Authorization: Bearer 8c086293-daf3-43d8-ae80-9e3b28831fa6'
+                'Authorization: Bearer '.$this->bearerToken,
             ),
         ));
 

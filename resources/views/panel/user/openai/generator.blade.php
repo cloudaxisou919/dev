@@ -32,9 +32,10 @@
 @section('script')
     <script src="/assets/libs/tom-select/dist/js/tom-select.base.min.js?1674944402" defer></script>
     <script src="/assets/js/panel/openai_generator.js"></script>
-    <script src="/assets/libs/fslightbox/index.js?1674944402" defer></script>
+    {{-- <script src="/assets/libs/fslightbox/index.js?1674944402" defer></script> --}}
     <script src="/assets/libs/wavesurfer/wavesurfer.js"></script>
     <script src="/assets/js/panel/voiceover.js"></script>
+    <script>
 
     @if($openai->type == 'voiceover')
 

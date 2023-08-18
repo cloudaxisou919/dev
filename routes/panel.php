@@ -378,6 +378,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => ['lo
 
         //Search
         Route::post('/api/search', [SearchController::class, 'search']);
+
+        //Download Image
+        Route::get('/download-image', [AIController::class, 'downloadImage'])->name('download.image');
     });
 
     // Override amamarul routes

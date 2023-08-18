@@ -44,7 +44,7 @@ class AIController extends Controller
         if ($request->post_type != 'ai_image_generator' && $user->remaining_words <= 0) {
             return response()->json(['errors' => 'You have no remaining words. Please upgrade your plan.'], 400);
         }
-        
+
         $image_generator = $request->image_generator;
         $post_type = $request->post_type;
 
@@ -687,7 +687,7 @@ class AIController extends Controller
     public function imageOutput($prompt, $size, $post, $user, $style, $lighting, $mood, $number_of_images, $image_generator, $negative_prompt)
     {
         //save generated image datas
-        $entries=[];
+        $entries = [];
 
         if ($user->remaining_images <= 0) {
             $data = array(
@@ -706,9 +706,9 @@ class AIController extends Controller
         $image_storage = $this->settings_two->ai_image_storage;
 
         for ($i = 0; $i < $number_of_images; $i++) {
-            if($image_generator != self::STABLEDIFFUSION) {
+            if ($image_generator != self::STABLEDIFFUSION) {
                 //send prompt to openai
-                if($prompt == null) return response()->json(["status" => "error", "message" => "You must provide a prompt"]);
+                if ($prompt == null) return response()->json(["status" => "error", "message" => "You must provide a prompt"]);
                 $response = FacadesOpenAI::images()->create([
                     'model' => 'image-alpha-001',
                     'prompt' => $prompt,
@@ -727,9 +727,9 @@ class AIController extends Controller
                 $settings = SettingTwo::first();
                 $stablediffusionKeys = explode(',', $settings->stable_diffusion_api_key);
                 $stablediffusionKey = $stablediffusionKeys[array_rand($stablediffusionKeys)];
-                if($prompt == null) 
+                if ($prompt == null)
                     return response()->json(["status" => "error", "message" => "You must provide a prompt"]);
-                if ($stablediffusionKey == "") 
+                if ($stablediffusionKey == "")
                     return response()->json(["status" => "error", "message" => "You must provide a StableDiffusion API Key."]);
                 $width = explode('x', $size)[0];
                 $height = explode('x', $size)[1];
@@ -744,21 +744,21 @@ class AIController extends Controller
                         'json' => [
                             'key' => $stablediffusionKey,
                             'prompt' => $prompt,
-                            "negative_prompt" => $negative_prompt, 
+                            "negative_prompt" => $negative_prompt,
                             'width' => $width,
                             'height' => $height,
                             'samples' => 1,
-                            "num_inference_steps" => "20", 
-                            "seed" => null, 
-                            "guidance_scale" => 7.5, 
-                            "safety_checker" => "yes", 
-                            "multi_lingual" => "no", 
-                            "panorama" => "no", 
-                            "self_attention" => "no", 
-                            "upscale" => "no", 
-                            "embeddings_model" => null, 
-                            "webhook" => null, 
-                            "track_id" => null 
+                            "num_inference_steps" => "20",
+                            "seed" => null,
+                            "guidance_scale" => 7.5,
+                            "safety_checker" => "yes",
+                            "multi_lingual" => "no",
+                            "panorama" => "no",
+                            "self_attention" => "no",
+                            "upscale" => "no",
+                            "embeddings_model" => null,
+                            "webhook" => null,
+                            "track_id" => null
                         ],
                     ]);
                 } catch (\Exception $e) {
@@ -782,7 +782,7 @@ class AIController extends Controller
                 $path = 'uploads/' . $nameOfImage;
             }
 
-            if($image_storage == self::STORAGE_S3){
+            if ($image_storage == self::STORAGE_S3) {
                 $uploadedFile = new File($path);
                 $aws_path = Storage::disk('s3')->put('', $uploadedFile);
                 unlink($path);
@@ -795,7 +795,7 @@ class AIController extends Controller
             $entry->user_id = Auth::id();
             $entry->openai_id = $post->id;
             $entry->input = $prompt;
-            if($image_generator == "stablediffusion")
+            if ($image_generator == "stablediffusion")
                 $entry->response = "SD";
             else
                 $entry->response = "DE";
@@ -1000,7 +1000,7 @@ class AIController extends Controller
             $lastThreeMessage = $lastThreeMessageQuery->get()->reverse();
         }
 
-        foreach($lastThreeMessage as $entry) {
+        foreach ($lastThreeMessage as $entry) {
             $message = new \stdClass();
             $message->role = "user";
             $message->content = $entry->input;
@@ -1046,5 +1046,24 @@ class AIController extends Controller
             'images' => $images,
             'hasMore' => $images->count() === $limit,
         ]);
+    }
+    public function downloadImage()
+    {
+        if (isset($_GET['url'])) {
+            $url = $_GET['url'];
+            $buffer = file_get_contents($url);
+            header("Content-Type: application/force-download");
+            header("Content-Type: application/octet-stream");
+            header("Content-Type: application/download");
+            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+            header("Content-Type: application/octet-stream");
+            header("Content-Transfer-Encoding: binary");
+            header("Content-Length: " . strlen($buffer));
+            header("Content-Disposition: attachment; filename=$url");
+            echo $buffer;
+        } else {
+            echo "Bad input";
+            exit;
+        }
     }
 }

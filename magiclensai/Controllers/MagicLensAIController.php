@@ -2,6 +2,7 @@
 
 namespace MagicLensAI\Controllers;
 
+use App\Http\Controllers\AIController;
 use Illuminate\Support\Facades\Auth;
 use MagicLensAI\MagicLensAIService;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ use Illuminate\Http\File;
 class MagicLensAIController extends Controller
 {
     protected $settings;
-    const STORAGE_S3 = 's3';
+    protected $settings_two;
 
     public function __construct()
     {
@@ -138,10 +139,11 @@ class MagicLensAIController extends Controller
                     Storage::disk('public')->put($filename, $image);
                     
                     $image_storage = $this->settings_two->ai_image_storage;
-                    if ($image_storage == self::STORAGE_S3) {
-                        $path = 'uploads/' .$filename;
+                    $path = 'uploads/' .$filename;
+                    if ($image_storage == AIController::STORAGE_S3) {
                         $uploadedFile = new File($path);
                         $aws_path = Storage::disk('s3')->put('', $uploadedFile);
+                        unlink($path);
                         $path = Storage::disk('s3')->url($aws_path);
                     }
 
